@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML & CSS Example</title>
+  <style>
+    body {
+      background-color: #f4f8fb;
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 20px;
+    }
+
+    h1 {
+      color: darkblue;
+      text-align: center;
+      text-decoration: underline;
+    }
+
+    h2 {
+      font-style: italic;
+      font-variant: small-caps;
+      font-weight: bold;
+      color: green;
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    a {
+      color: blue;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: red;
+      text-decoration: underline;
+    }
+
+    ul li a {
+      color: purple;
+    }
+
+    .box {
+      border: 2px solid black;
+      margin: 10px;
+      padding: 10px;
+      display: inline-block;
+      background-color: #e0f7fa;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 20px 0;
+    }
+
+    table, th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .float-box {
+      width: 150px;
+      height: 100px;
+      background: pink;
+      float: left;
+      margin: 5px;
+    }
+
+    .overflow-box {
+      width: 200px;
+      height: 80px;
+      overflow: scroll;
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>HTML & CSS Demonstration</h1>
+  </header>
+
+  <h2>Text Formatting</h2>
+  <p>
+    <b>Bold</b>, <i>Italic</i>, <u>Underline</u>, <s>Strikethrough</s>, 
+    <del>Deleted</del>, <mark>Highlighted</mark>, <sub>Subscript</sub>
+  </p>
+
+  <h2>Line Break & Preformatted</h2>
+  <p>Normal text line<br>Next line after &lt;br&gt; tag</p>
+  <pre>
+Preformatted text
+    keeps spaces
+        and line breaks
+  </pre>
+
+  <h2>Links</h2>
+  <a href="https://www.google.com" target="_blank">Google (opens in new tab)</a>
+
+  <h2>Lists</h2>
+  <ul>
+    <li>Unordered Item 1</li>
+    <li>Unordered Item 2 with <a href="#">link</a></li>
+  </ul>
+  <ol>
+    <li>Ordered Item 1</li>
+    <li>Ordered Item 2</li>
+  </ol>
+
+  <h2>Div & Span</h2>
+  <div class="box">
+    This is inside a div
+    <span style="color:red;">with a red span</span>
+  </div>
+
+  <h2>Table</h2>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Age</th>
+    </tr>
+    <tr>
+      <td>Mani</td>
+      <td>20</td>
+    </tr>
+    <tr>
+      <td>Arun</td>
+      <td>21</td>
+    </tr>
+  </table>
+
+  <h2>Float Example</h2>
+  <div class="float-box">Float Box 1</div>
+  <div class="float-box">Float Box 2</div>
+  <div style="clear:both;"></div>
+
+  <h2>Overflow Example</h2>
+  <div class="overflow-box">
+    This is a long text that will overflow and show scrollbars. Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+  </div>
+
+  <footer>
+    <p style="text-align:center; margin-top:20px;">&copy; 2025 Demo Page</p>
+  </footer>
+
+</body>
+</html>
