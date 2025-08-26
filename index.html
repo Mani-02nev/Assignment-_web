@@ -3,66 +3,193 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>College Assistant</title>
+  <title>Efficient College Assistant</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body { background: #f4f8fb; font-family: Arial, sans-serif; }
-    .chat-box {
-      max-width: 600px; margin: 40px auto; background: white;
-      border-radius: 12px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    body { 
+      background: #f4f8fb; 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
     }
-    .messages { max-height: 400px; overflow-y: auto; margin-bottom: 15px; }
-    .message { padding: 8px 12px; border-radius: 8px; margin-bottom: 10px; }
-    .user { background: #007bff; color: white; text-align: right; }
-    .bot { background: #e9ecef; text-align: left; }
+    .chat-box {
+      max-width: 600px; 
+      margin: 50px auto; 
+      background: white;
+      border-radius: 12px; 
+      padding: 20px; 
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      height: 80vh;
+    }
+    .chat-header {
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 15px;
+    }
+    .messages { 
+      flex-grow: 1;
+      overflow-y: auto; 
+      margin-bottom: 15px; 
+      padding-right: 10px;
+    }
+    .message { 
+      padding: 10px 15px; 
+      border-radius: 18px; 
+      margin-bottom: 10px; 
+      max-width: 80%;
+      line-height: 1.4;
+    }
+    .user { 
+      background: #007bff; 
+      color: white; 
+      align-self: flex-end;
+      margin-left: auto;
+    }
+    .bot { 
+      background: #e9ecef; 
+      color: #333;
+      align-self: flex-start;
+    }
+    .typing-indicator {
+      color: #6c757d;
+      font-style: italic;
+    }
+    .input-group {
+      border-top: 1px solid #ddd;
+      padding-top: 15px;
+    }
   </style>
 </head>
 <body>
 
   <div class="chat-box">
-    <h3 class="text-center mb-3">🎓 College Assistant</h3>
-    <div id="messages" class="messages"></div>
+    <div class="chat-header">
+      <h3 class="text-center mb-0">🎓 College Assistant</h3>
+    </div>
+    <div id="messages" class="messages d-flex flex-column pt-3"></div>
     <div class="input-group">
-      <input type="text" id="userInput" class="form-control" placeholder="Ask me anything about your college...">
-      <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+      <input type="text" id="userInput" class="form-control" placeholder="Ask about admissions, courses, etc.">
+      <button class="btn btn-primary" id="sendBtn">Send</button>
     </div>
   </div>
 
   <script>
-    const messagesDiv = document.getElementById("messages");
+    document.addEventListener("DOMContentLoaded", () => {
+      const messagesDiv = document.getElementById("messages");
+      const userInput = document.getElementById("userInput");
+      const sendBtn = document.getElementById("sendBtn");
 
-    function sendMessage() {
-      const input = document.getElementById("userInput");
-      const userText = input.value.trim();
-      if (userText === "") return;
+      // --- KNOWLEDGE BASE ---
+      // Easily add more questions and answers here without changing the logic.
+      const knowledgeBase = {
+        greetings: {
+          keywords: ["hello", "hi", "hey", "good morning", "good afternoon"],
+          response: "Hello! I'm your friendly college assistant. How can I help you today? 🤖"
+        },
+        admissions: {
+          keywords: ["admission", "apply", "application", "enroll", "procedure"],
+          response: "Admissions are open from June to July each year. You can apply online through our official admissions portal. Make sure you have your academic transcripts ready!"
+        },
+        courses: {
+          keywords: ["course", "courses", "program", "programs", "degree", "degrees", "stream"],
+          response: "We offer B.Tech degrees in Computer Science (CSE), Electronics & Communication (ECE), Mechanical Engineering, and Civil Engineering. Which one are you interested in?"
+        },
+        library: {
+          keywords: ["library", "books", "resources", "reading"],
+          response: "Our central library is open from 8 AM to 8 PM on weekdays and 10 AM to 4 PM on Saturdays. It's equipped with a vast digital library accessible 24/7."
+        },
+        hostel: {
+          keywords: ["hostel", "accommodation", "dorm", "room"],
+          response: "We provide secure, separate hostels for boys and girls. All rooms come with Wi-Fi, study tables, and access to a common mess hall and recreational facilities."
+        },
+        fees: {
+          keywords: ["fee", "fees", "cost", "tuition", "payment"],
+          response: "For detailed information on the fee structure for different courses, please visit the 'Admissions' section of the college website. You can also find details about scholarships there."
+        },
+        contact: {
+            keywords: ["contact", "phone", "email", "address", "call"],
+            response: "You can reach our admissions office at (123) 456-7890 or via email at admissions@ourcollege.edu. We are located at 123 College Road, Knowledge City."
+        },
+        goodbye: {
+            keywords: ["bye", "goodbye", "thanks", "thank you", "ok"],
+            response: "You're welcome! Feel free to ask if you have any more questions. Have a great day!"
+        }
+      };
+      
+      const defaultResponse = "I'm sorry, I don't have information about that yet. Could you please ask about admissions, courses, library, or hostel facilities?";
 
-      // Add user message
-      addMessage(userText, "user");
+      // --- CORE FUNCTIONS ---
 
-      // Simple AI responses
-      let botReply = "I'm your College Assistant 🤖. Can you ask me something about admissions, courses, or facilities?";
-      if (userText.toLowerCase().includes("admission")) {
-        botReply = "Admissions are open in June–July every year. You can apply online via our portal.";
-      } else if (userText.toLowerCase().includes("course")) {
-        botReply = "We offer B.Tech in CSE, ECE, Mechanical, and Civil Engineering.";
-      } else if (userText.toLowerCase().includes("library")) {
-        botReply = "Our library is open from 8 AM to 8 PM with digital resources available.";
-      } else if (userText.toLowerCase().includes("hostel")) {
-        botReply = "We provide separate hostels for boys and girls with Wi-Fi and mess facilities.";
+      // Function to get a response from the knowledge base
+      function getBotResponse(userText) {
+        const lowerUserText = userText.toLowerCase();
+
+        for (const key in knowledgeBase) {
+          const topic = knowledgeBase[key];
+          // Find if any keyword from the topic matches the user input
+          const foundKeyword = topic.keywords.find(keyword => lowerUserText.includes(keyword));
+          if (foundKeyword) {
+            return topic.response;
+          }
+        }
+        return defaultResponse;
       }
 
-      setTimeout(() => addMessage(botReply, "bot"), 600);
+      // Function to add a message to the chat window
+      function addMessage(text, sender, isHTML = false) {
+        const msg = document.createElement("div");
+        msg.classList.add("message", sender);
+        
+        if (isHTML) {
+            msg.innerHTML = text;
+        } else {
+            msg.textContent = text;
+        }
 
-      input.value = "";
-    }
+        messagesDiv.appendChild(msg);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight; // Auto-scroll to the latest message
+      }
 
-    function addMessage(text, sender) {
-      const msg = document.createElement("div");
-      msg.classList.add("message", sender);
-      msg.textContent = text;
-      messagesDiv.appendChild(msg);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
+      // Main function to handle sending a message
+      function sendMessage() {
+        const userText = userInput.value.trim();
+        if (userText === "") return;
+
+        addMessage(userText, "user");
+        userInput.value = ""; // Clear input field immediately
+
+        // Show typing indicator
+        const typingIndicator = document.createElement("div");
+        typingIndicator.classList.add("message", "bot", "typing-indicator");
+        typingIndicator.innerHTML = "<i>Typing...</i>";
+        messagesDiv.appendChild(typingIndicator);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+        // Simulate bot thinking and get response
+        setTimeout(() => {
+          messagesDiv.removeChild(typingIndicator); // Remove typing indicator
+          const botReply = getBotResponse(userText);
+          addMessage(botReply, "bot");
+        }, 800 + Math.random() * 500); // Simulate a realistic delay
+      }
+
+      // --- EVENT LISTENERS ---
+
+      sendBtn.addEventListener("click", sendMessage);
+
+      userInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          sendMessage();
+        }
+      });
+      
+      // --- INITIALIZATION ---
+      
+      // Greet the user on page load
+      setTimeout(() => {
+         addMessage("Hi there! Ask me anything about the college. 🎓", "bot");
+      }, 500);
+
+    });
   </script>
 
 </body>
