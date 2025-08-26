@@ -78,8 +78,22 @@
       const userInput = document.getElementById("userInput");
       const sendBtn = document.getElementById("sendBtn");
 
+      // --- Rotating placeholder hints ---
+      const hints = [
+        "Ask about admissions 📝",
+        "Check available courses 📚",
+        "Know hostel facilities 🏠",
+        "Library timings ⏰",
+        "Fee details 💰",
+        "Contact information 📞"
+      ];
+      let hintIndex = 0;
+      setInterval(() => {
+        userInput.setAttribute("placeholder", hints[hintIndex]);
+        hintIndex = (hintIndex + 1) % hints.length;
+      }, 3000);
+
       // --- KNOWLEDGE BASE ---
-      // Easily add more questions and answers here without changing the logic.
       const knowledgeBase = {
         greetings: {
           keywords: ["hello", "hi", "hey", "good morning", "good afternoon"],
@@ -118,14 +132,10 @@
       const defaultResponse = "I'm sorry, I don't have information about that yet. Could you please ask about admissions, courses, library, or hostel facilities?";
 
       // --- CORE FUNCTIONS ---
-
-      // Function to get a response from the knowledge base
       function getBotResponse(userText) {
         const lowerUserText = userText.toLowerCase();
-
         for (const key in knowledgeBase) {
           const topic = knowledgeBase[key];
-          // Find if any keyword from the topic matches the user input
           const foundKeyword = topic.keywords.find(keyword => lowerUserText.includes(keyword));
           if (foundKeyword) {
             return topic.response;
@@ -134,61 +144,41 @@
         return defaultResponse;
       }
 
-      // Function to add a message to the chat window
       function addMessage(text, sender, isHTML = false) {
         const msg = document.createElement("div");
         msg.classList.add("message", sender);
-        
-        if (isHTML) {
-            msg.innerHTML = text;
-        } else {
-            msg.textContent = text;
-        }
-
+        msg[isHTML ? "innerHTML" : "textContent"] = text;
         messagesDiv.appendChild(msg);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight; // Auto-scroll to the latest message
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
       }
 
-      // Main function to handle sending a message
       function sendMessage() {
         const userText = userInput.value.trim();
-        if (userText === "") return;
+        if (!userText) return;
 
         addMessage(userText, "user");
-        userInput.value = ""; // Clear input field immediately
+        userInput.value = "";
 
-        // Show typing indicator
         const typingIndicator = document.createElement("div");
         typingIndicator.classList.add("message", "bot", "typing-indicator");
         typingIndicator.innerHTML = "<i>Typing...</i>";
         messagesDiv.appendChild(typingIndicator);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-        // Simulate bot thinking and get response
         setTimeout(() => {
-          messagesDiv.removeChild(typingIndicator); // Remove typing indicator
-          const botReply = getBotResponse(userText);
-          addMessage(botReply, "bot");
-        }, 800 + Math.random() * 500); // Simulate a realistic delay
+          messagesDiv.removeChild(typingIndicator);
+          addMessage(getBotResponse(userText), "bot");
+        }, 800 + Math.random() * 500);
       }
 
       // --- EVENT LISTENERS ---
-
       sendBtn.addEventListener("click", sendMessage);
+      userInput.addEventListener("keydown", e => e.key === "Enter" && sendMessage());
 
-      userInput.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-          sendMessage();
-        }
-      });
-      
-      // --- INITIALIZATION ---
-      
-      // Greet the user on page load
+      // --- INITIAL BOT GREETING ---
       setTimeout(() => {
-         addMessage("Hi there! Ask me anything about the college. 🎓", "bot");
+        addMessage("Hi there! 👋 Ask me about admissions, courses, hostel, or fees. 🎓", "bot");
       }, 500);
-
     });
   </script>
 
