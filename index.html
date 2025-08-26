@@ -1,256 +1,280 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>HTML & CSS Example</title>
-  <style>
-    body {
-      background-color: #f4f8fb;
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      padding: 20px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIT AI Assistant</title>
+    <style>
+      /* --- START: Added styles for the page and variables --- */
+      :root {
+        --primary-blue: #005A9C; /* A corporate blue for the header */
+        --secondary-blue: #2563EB; /* A brighter blue for interaction */
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: #e9f5ff;
+        margin: 0;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        box-sizing: border-box;
+      }
+      .main-content {
+        text-align: center;
+        color: #333;
+      }
+      h1 {
+        color: var(--primary-blue);
+      }
+      /* --- END: Added styles --- */
 
-    h1 {
-      color: darkblue;
-      text-align: center;
-      text-decoration: underline;
-    }
+      /* Your Provided CSS */
+      #sit-chatbot {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 320px;
+        max-width: 90%;
+        z-index: 9999;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+        overflow: hidden;
+        font-family: sans-serif;
+      }
+      #sit-chat-header {
+        background: var(--primary-blue);
+        color: white;
+        padding: 10px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      #sit-chat-toggle-theme {
+        background: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1.2rem;
+      }
+      #sit-chat-body {
+        display: none;
+        background: #f0f8ff;
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 10px;
+      }
+      #sit-chat-messages div {
+        margin-bottom: 10px;
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+      }
+      .msg-user {
+        justify-content: flex-end;
+      }
+      .msg-bubble {
+        max-width: 75%;
+        padding: 8px 12px;
+        border-radius: 12px;
+        line-height: 1.4;
+      }
+      .msg-user .msg-bubble {
+        background: var(--secondary-blue);
+        color: white;
+        border-radius: 12px 12px 0 12px;
+      }
+      .msg-ai .msg-bubble {
+        background: #e0e7ff;
+        color: #1f2937;
+        border-radius: 12px 12px 12px 0;
+      }
+      .avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: #ccc; /* Fallback color */
+      }
+      .quick-btn {
+        background: #2563EB;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        margin: 2px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: background-color 0.3s;
+      }
+      .quick-btn:hover {
+        background: #1E40AF;
+      }
+      #sit-chat-input {
+        flex: 1;
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+      #sit-chat-send {
+        background: var(--secondary-blue);
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
 
-    h2 {
-      font-style: italic;
-      font-variant: small-caps;
-      font-weight: bold;
-      color: green;
-    }
-
-    p {
-      font-size: 16px;
-      line-height: 1.5;
-    }
-
-    a {
-      color: blue;
-      text-decoration: none;
-    }
-
-    a:hover {
-      color: red;
-      text-decoration: underline;
-    }
-
-    ul li a {
-      color: purple;
-    }
-
-    .box {
-      border: 2px solid black;
-      margin: 10px;
-      padding: 10px;
-      display: inline-block;
-      background-color: #e0f7fa;
-    }
-
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      margin: 20px 0;
-    }
-
-    table, th, td {
-      border: 1px solid black;
-      padding: 8px;
-      text-align: center;
-    }
-
-    .float-box {
-      width: 150px;
-      height: 100px;
-      background: pink;
-      float: left;
-      margin: 5px;
-    }
-
-    .overflow-box {
-      width: 200px;
-      height: 80px;
-      overflow: scroll;
-      border: 1px solid black;
-    }
-  </style>
+      /* Dark Mode Styles */
+      .dark-mode {
+        background: #1f2937;
+        color: white;
+      }
+      .dark-mode #sit-chat-body {
+        background: #111827;
+      }
+      .dark-mode .msg-ai .msg-bubble {
+        background: #374151;
+        color: white;
+      }
+      .dark-mode .msg-user .msg-bubble {
+        background: #2563EB;
+        color: white;
+      }
+    </style>
 </head>
 <body>
 
-  <header>
-    <h1>HTML & CSS Demonstration</h1>
-  </header>
-
-  <h2>Text Formatting</h2>
-  <p>
-    <b>Bold</b>, <i>Italic</i>, <u>Underline</u>, <s>Strikethrough</s>, 
-    <del>Deleted</del>, <mark>Highlighted</mark>, <sub>Subscript</sub>
-  </p>
-
-  <h2>Line Break & Preformatted</h2>
-  <p>Normal text line<br>Next line after &lt;br&gt; tag</p>
-  <pre>
-Preformatted text
-    keeps spaces
-        and line breaks
-  </pre>
-
-  <h2>Links</h2>
-  <a href="https://www.google.com" target="_blank">Google (opens in new tab)</a>
-
-  <h2>Lists</h2>
-  <ul>
-    <li>Unordered Item 1</li>
-    <li>Unordered Item 2 with <a href="#">link</a></li>
-  </ul>
-  <ol>
-    <li>Ordered Item 1</li>
-    <li>Ordered Item 2</li>
-  </ol>
-
-  <h2>Div & Span</h2>
-  <div class="box">
-    This is inside a div
-    <span style="color:red;">with a red span</span>
-  </div>
-
-  <h2>Table</h2>
-  <table>
-    <tr>
-      <th>Name</th>
-      <th>Age</th>
-    </tr>
-    <tr>
-      <td>Mani</td>
-      <td>20</td>
-    </tr>
-    <tr>
-      <td>Arun</td>
-      <td>21</td>
-    </tr>
-  </table>
-
-  <h2>Float Example</h2>
-  <div class="float-box">Float Box 1</div>
-  <div class="float-box">Float Box 2</div>
-  <div style="clear:both;"></div>
-
-  <h2>Overflow Example</h2>
-  <div class="overflow-box">
-    This is a long text that will overflow and show scrollbars. Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-  </div>
-  <!-- Optimized SIT AI Assistant -->
-<div id="sit-chatbot" style="position: fixed; bottom: 20px; right: 20px; width: 320px; max-width: 90%; z-index: 9999; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.25); overflow: hidden; font-family:sans-serif;">
-  <div id="sit-chat-header" style="background: var(--primary-blue); color: white; padding: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
-    <span>SIT AI Assistant</span>
-    <button id="sit-chat-toggle-theme" style="background: transparent; border: none; color: white; cursor: pointer;">🌙</button>
-  </div>
-  <div id="sit-chat-body" style="display:none; background:#f0f8ff; max-height:400px; overflow-y:auto; padding:10px;">
-    <div id="sit-chat-messages"></div>
-    <div id="sit-quick-replies" style="margin:10px 0;">
-      <button class="quick-btn" data-msg="About SIT">About SIT</button>
-      <button class="quick-btn" data-msg="Admission details">Admission</button>
-      <button class="quick-btn" data-msg="Departments offered">Departments</button>
-      <button class="quick-btn" data-msg="Placement info">Placements</button>
-      <button class="quick-btn" data-msg="Contact info">Contact</button>
+    <div class="main-content">
+        <h1>Welcome to the SIT Demo Page</h1>
+        <p>Click the chat icon on the bottom right to talk to the AI Assistant.</p>
     </div>
-    <div style="display:flex; gap:5px;">
-      <input id="sit-chat-input" type="text" placeholder="Type a message..." style="flex:1; padding:8px; border-radius:5px; border:1px solid #ccc;">
-      <button id="sit-chat-send" style="background: var(--secondary-blue); color:white; border:none; padding:8px 12px; border-radius:5px; cursor:pointer;">Send</button>
+
+    <div id="sit-chatbot">
+      <div id="sit-chat-header">
+        <span>SIT AI Assistant</span>
+        <button id="sit-chat-toggle-theme">🌙</button>
+      </div>
+      <div id="sit-chat-body">
+        <div id="sit-chat-messages">
+          <div class="msg-ai">
+            <img class="avatar" src="https://placehold.co/30x30/005A9C/FFFFFF?text=AI" alt="AI Avatar">
+            <div class="msg-bubble">Hi there! How can I help you with SIT today?</div>
+          </div>
+        </div>
+        <div id="sit-quick-replies" style="margin:10px 0;">
+          <button class="quick-btn" data-msg="About SIT">About SIT</button>
+          <button class="quick-btn" data-msg="Admission details">Admission</button>
+          <button class="quick-btn" data-msg="Departments offered">Departments</button>
+          <button class="quick-btn" data-msg="Placement info">Placements</button>
+          <button class="quick-btn" data-msg="Contact info">Contact</button>
+        </div>
+        <div style="display:flex; gap:5px;">
+          <input id="sit-chat-input" type="text" placeholder="Type a message..." style="flex:1; padding:8px; border-radius:5px; border:1px solid #ccc;">
+          <button id="sit-chat-send">Send</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
-<style>
-  #sit-chat-messages div{margin-bottom:10px; display:flex; gap:8px; align-items:flex-start;}
-  .msg-user{justify-content:flex-end;}
-  .msg-bubble{max-width:70%; padding:8px 12px; border-radius:12px; line-height:1.3;}
-  .msg-user .msg-bubble{background: var(--secondary-blue); color:white; border-radius:12px 12px 0 12px;}
-  .msg-ai .msg-bubble{background:#e0e7ff; color:#1f2937; border-radius:12px 12px 12px 0;}
-  .avatar{width:30px; height:30px; border-radius:50%;}
-  .quick-btn{background:#2563EB; color:white; border:none; padding:5px 10px; margin:2px; border-radius:5px; cursor:pointer; font-size:12px; transition:0.3s;}
-  .quick-btn:hover{background:#1E40AF;}
-  .dark-mode{background:#1f2937; color:white;}
-  .dark-mode .msg-ai .msg-bubble{background:#374151; color:white;}
-  .dark-mode .msg-user .msg-bubble{background:#2563EB; color:white;}
-  .dark-mode #sit-chat-body{background:#111827;}
-</style>
+    <script>
+    const chatHeader = document.getElementById('sit-chat-header');
+    const chatBody = document.getElementById('sit-chat-body');
+    const chatMessages = document.getElementById('sit-chat-messages');
+    const chatInput = document.getElementById('sit-chat-input');
+    const chatSend = document.getElementById('sit-chat-send');
+    const quickBtns = document.querySelectorAll('.quick-btn');
+    const themeBtn = document.getElementById('sit-chat-toggle-theme');
+    const chatbotContainer = document.getElementById('sit-chatbot');
 
-<script>
-const chatHeader = document.getElementById('sit-chat-header');
-const chatBody = document.getElementById('sit-chat-body');
-const chatMessages = document.getElementById('sit-chat-messages');
-const chatInput = document.getElementById('sit-chat-input');
-const chatSend = document.getElementById('sit-chat-send');
-const quickBtns = document.querySelectorAll('.quick-btn');
-const themeBtn = document.getElementById('sit-chat-toggle-theme');
-const chatbotContainer = document.getElementById('sit-chatbot');
+    // Toggle chat open/close
+    chatHeader.addEventListener('click', (event) => {
+      // Don't close the chat if the theme button was clicked
+      if (event.target === themeBtn) return;
+      
+      const isDisplayed = chatBody.style.display === 'block';
+      chatBody.style.display = isDisplayed ? 'none' : 'block';
+      
+      // If we are opening the chat, scroll to the bottom
+      if (!isDisplayed) {
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+    });
 
-// Toggle chat open/close
-chatHeader.addEventListener('click', () => {
-  chatBody.style.display = chatBody.style.display==='block'?'none':'block';
-});
+    // Toggle dark/light theme
+    themeBtn.addEventListener('click', (event) => {
+      event.stopPropagation(); // Prevents the header click event from firing
+      chatbotContainer.classList.toggle('dark-mode');
+      themeBtn.textContent = chatbotContainer.classList.contains('dark-mode') ? '☀️' : '🌙';
+    });
 
-// Toggle dark/light theme
-themeBtn.addEventListener('click', ()=>{
-  chatbotContainer.classList.toggle('dark-mode');
-  themeBtn.textContent = chatbotContainer.classList.contains('dark-mode')?'☀️':'🌙';
-});
+    // Predefined AI responses
+    function getAIResponse(msg) {
+      const m = msg.toLowerCase();
+      if (m.includes('about')) return "SIT is Seshasayee Institute of Technology, Trichy, established in 1952. It is a government-aided institution renowned for providing quality technical education and fostering innovation.";
+      if (m.includes('admission')) return "For detailed admission information, including courses, fees, eligibility criteria, and the online application process, please visit the official admissions page on the SIT website.";
+      if (m.includes('department')) return "SIT offers diploma programs in several engineering disciplines: Computer Science (CSE), Instrumentation & Control (ICE), Mechanical, Civil, Electrical & Electronics (EEE), Paper Technology, and Chemical Engineering.";
+      if (m.includes('placement')) return "SIT has a dedicated placement cell with strong industry connections, resulting in excellent placement records year after year. Top companies recruit from our campus.";
+      if (m.includes('contact')) return "You can find us at: Thanjore Main Road, Ariyamangalam, Trichy-620010, Tamil Nadu, India. For direct inquiries, please check the official website for the latest phone number.";
+      return "I'm sorry, I couldn't quite understand that. Please try rephrasing or use one of the quick reply buttons below for common questions.";
+    }
 
-// Predefined AI responses
-function getAIResponse(msg){
-  const m = msg.toLowerCase();
-  if(m.includes('about')) return "SIT is Seshasayee Institute of Technology, Trichy, established in 1952. It offers quality technical education.";
-  if(m.includes('admission')) return "Admission: Check our Admission page for courses, fees, eligibility, and application process.";
-  if(m.includes('department')) return "Departments: CSE, ICE, Mechanical, Civil, EEE, Paper Tech, Chemical Engineering.";
-  if(m.includes('placement')) return "Placements: SIT has strong industry connections and excellent placement records.";
-  if(m.includes('contact')) return "Contact: Thanjore Main Road, Ariyamangalam, Trichy-620010, Tamil Nadu, India. Phone: +91-XXXX-XXXXXX";
-  return "Sorry, I couldn't understand. You can try one of the quick buttons.";
-}
+    // Add message to chat
+    function addMessage(sender, text) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = sender === 'user' ? 'msg-user' : 'msg-ai';
+      
+      // Use placeholder images that will always load
+      const aiAvatar = `<img class="avatar" src="https://placehold.co/30x30/005A9C/FFFFFF?text=AI" alt="AI Avatar">`;
+      const userAvatar = `<img class="avatar" src="https://placehold.co/30x30/777777/FFFFFF?text=U" alt="User Avatar">`;
 
-// Add message to chat
-function addMessage(sender, text){
-  const msgDiv = document.createElement('div');
-  msgDiv.className = sender==='user'?'msg-user':'msg-ai';
-  msgDiv.innerHTML = `${sender==='ai'?'<img class="avatar" src="img/sit.jpeg">':''}<div class="msg-bubble">${text}</div>${sender==='user'?'<img class="avatar" src="img/FOUNDER.jpeg">':''}`;
-  chatMessages.appendChild(msgDiv);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-}
+      msgDiv.innerHTML = `${sender === 'ai' ? aiAvatar : ''}<div class="msg-bubble">${text}</div>${sender === 'user' ? userAvatar : ''}`;
+      chatMessages.appendChild(msgDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 
-// Send message function
-function sendMessage(message){
-  if(!message) return;
-  addMessage('user', message);
-  addMessage('ai', 'Typing...');
-  setTimeout(()=>{
-    chatMessages.lastChild.remove(); // remove 'Typing...'
-    addMessage('ai', getAIResponse(message));
-  },800);
-}
+    // Send message function
+    function sendMessage(message) {
+      const trimmedMessage = message.trim();
+      if (!trimmedMessage) return;
+      
+      addMessage('user', trimmedMessage);
+      
+      // Show a "Typing..." indicator
+      const typingIndicator = document.createElement('div');
+      typingIndicator.className = 'msg-ai';
+      typingIndicator.innerHTML = `<img class="avatar" src="https://placehold.co/30x30/005A9C/FFFFFF?text=AI" alt="AI Avatar"><div class="msg-bubble">...</div>`;
+      chatMessages.appendChild(typingIndicator);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
 
-// Send button & Enter key
-chatSend.addEventListener('click', ()=>{
-  sendMessage(chatInput.value);
-  chatInput.value='';
-});
-chatInput.addEventListener('keypress',(e)=>{
-  if(e.key==='Enter'){
-    sendMessage(chatInput.value);
-    chatInput.value='';
-  }
-});
+      setTimeout(() => {
+        typingIndicator.remove(); // Remove 'Typing...' indicator
+        addMessage('ai', getAIResponse(trimmedMessage));
+      }, 800);
+    }
 
-// Quick buttons
-quickBtns.forEach(btn=>{btn.addEventListener('click',()=>sendMessage(btn.dataset.msg));});
-</script>
+    // Event Listeners for Send button & Enter key
+    chatSend.addEventListener('click', () => {
+      sendMessage(chatInput.value);
+      chatInput.value = '';
+      chatInput.focus();
+    });
 
-  <footer>
-    <p style="text-align:center; margin-top:20px;">&copy; 2025 Demo Page</p>
-  </footer>
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendMessage(chatInput.value);
+        chatInput.value = '';
+      }
+    });
 
+    // Event Listeners for Quick buttons
+    quickBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        sendMessage(btn.dataset.msg);
+        chatInput.focus();
+      });
+    });
+    </script>
 </body>
 </html>
