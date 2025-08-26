@@ -5,60 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>College Assistant</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body { background: #f8f9fa; font-family: Arial, sans-serif; }
 
-    /* Floating Assistant Button */
-    #assistantBtn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      font-size: 24px;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  <style>
+    body {
+      background: #f8f9fa;
+      font-family: Arial, sans-serif;
     }
 
-    /* Chat Window */
+    /* Chatbox */
     #chatBox {
-      position: fixed;
-      bottom: 90px;
-      right: 20px;
       width: 320px;
-      max-height: 450px;
-      background: white;
+      height: 420px;
+      position: fixed;
+      top: 80px;        /* moved to top */
+      right: 20px;
+      background: #fff;
       border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
       display: none;
       flex-direction: column;
+      overflow: hidden;
+      z-index: 9999;
     }
 
-    .chat-header {
+    #chatHeader {
       background: #007bff;
       color: white;
       padding: 10px;
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
       font-weight: bold;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      text-align: center;
     }
 
-    .chat-header button {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 20px;
-      cursor: pointer;
-    }
-
-    .messages {
+    #messages {
       flex: 1;
       padding: 10px;
       overflow-y: auto;
@@ -66,35 +44,75 @@
 
     .message {
       padding: 8px 12px;
+      margin: 6px 0;
       border-radius: 8px;
-      margin-bottom: 8px;
-      max-width: 80%;
+      max-width: 75%;
+      clear: both;
     }
 
-    .user { background: #007bff; color: white; margin-left: auto; text-align: right; }
-    .bot { background: #e9ecef; color: black; margin-right: auto; text-align: left; }
+    .user {
+      background: #007bff;
+      color: white;
+      margin-left: auto;
+      text-align: right;
+    }
 
-    .input-group {
-      padding: 10px;
+    .bot {
+      background: #e9ecef;
+      color: black;
+      margin-right: auto;
+      text-align: left;
+    }
+
+    #inputArea {
+      display: flex;
       border-top: 1px solid #ddd;
+    }
+
+    #userInput {
+      flex: 1;
+      border: none;
+      padding: 10px;
+    }
+
+    #sendBtn {
+      border: none;
+      background: #007bff;
+      color: white;
+      padding: 10px 15px;
+      cursor: pointer;
+    }
+
+    /* Assistant Toggle Button */
+    #assistantBtn {
+      position: fixed;
+      top: 20px;        /* moved to top */
+      right: 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 55px;
+      height: 55px;
+      cursor: pointer;
+      font-size: 22px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+      z-index: 10000;
     }
   </style>
 </head>
 <body>
 
-  <!-- Floating Chat Button -->
+  <!-- Assistant Toggle Button -->
   <button id="assistantBtn">💬</button>
 
-  <!-- Chat Window -->
-  <div id="chatBox" class="d-flex">
-    <div class="chat-header">
-      College Assistant 🎓
-      <button onclick="toggleChat()">✖</button>
-    </div>
-    <div id="messages" class="messages"></div>
-    <div class="input-group">
-      <input type="text" id="userInput" class="form-control" placeholder="Ask about college...">
-      <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+  <!-- Chatbox -->
+  <div id="chatBox">
+    <div id="chatHeader">🎓 College Assistant</div>
+    <div id="messages"></div>
+    <div id="inputArea">
+      <input type="text" id="userInput" placeholder="Ask me anything..." />
+      <button id="sendBtn">➤</button>
     </div>
   </div>
 
@@ -102,33 +120,37 @@
     const chatBox = document.getElementById("chatBox");
     const assistantBtn = document.getElementById("assistantBtn");
     const messagesDiv = document.getElementById("messages");
+    const userInput = document.getElementById("userInput");
 
-    function toggleChat() {
-      chatBox.style.display = chatBox.style.display === "none" ? "flex" : "none";
-    }
-    assistantBtn.addEventListener("click", toggleChat);
+    assistantBtn.addEventListener("click", () => {
+      chatBox.style.display = chatBox.style.display === "flex" ? "none" : "flex";
+    });
+
+    document.getElementById("sendBtn").addEventListener("click", sendMessage);
+    userInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") sendMessage();
+    });
 
     function sendMessage() {
-      const input = document.getElementById("userInput");
-      const userText = input.value.trim();
-      if (userText === "") return;
+      const text = userInput.value.trim();
+      if (!text) return;
 
-      addMessage(userText, "user");
+      addMessage(text, "user");
 
-      // Simple AI responses
-      let botReply = "I'm your College Assistant 🤖. Ask me about admissions, courses, hostel, or library.";
-      if (userText.toLowerCase().includes("admission")) {
-        botReply = "📢 Admissions are open June–July. Apply online via the official portal.";
-      } else if (userText.toLowerCase().includes("course")) {
-        botReply = "📚 We offer B.Tech in CSE, ECE, Mechanical, and Civil.";
-      } else if (userText.toLowerCase().includes("library")) {
-        botReply = "📖 The library is open 8 AM – 8 PM with digital resources.";
-      } else if (userText.toLowerCase().includes("hostel")) {
-        botReply = "🏠 Hostels available with Wi-Fi, mess, and study halls.";
+      let reply = "I'm your College Assistant 🤖. Please ask about admissions, courses, library, or hostel.";
+
+      if (text.toLowerCase().includes("admission")) {
+        reply = "Admissions are open in June–July every year. You can apply online via our portal.";
+      } else if (text.toLowerCase().includes("course")) {
+        reply = "We offer B.Tech in CSE, ECE, Mechanical, and Civil Engineering.";
+      } else if (text.toLowerCase().includes("library")) {
+        reply = "Our library is open from 8 AM to 8 PM with digital resources available.";
+      } else if (text.toLowerCase().includes("hostel")) {
+        reply = "We provide separate hostels for boys and girls with Wi-Fi and mess facilities.";
       }
 
-      setTimeout(() => addMessage(botReply, "bot"), 600);
-      input.value = "";
+      setTimeout(() => addMessage(reply, "bot"), 600);
+      userInput.value = "";
     }
 
     function addMessage(text, sender) {
